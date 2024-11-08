@@ -1,0 +1,118 @@
+<!-- Sección Ver Vidrios -->
+<div id="gestionarVidrios" style="display:none;">
+    <h2 class="text-center my-4">Agregar Tipo De Vidrio</h2>
+
+    <!-- Formulario para agregar un nuevo tipo de vidrio -->
+    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addModal">Agregar Tipo de Vidrio</button>
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Nuevo Tipo de Vidrio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <input type="hidden" name="action" value="add_tipo_vidrio">
+                    <div class="form-group mb-3">
+                        <label for="tiposDeVidrios">Tipo de Vidrio</label>
+                        <input type="text" name="tiposDeVidrios" class="form-control" required>
+                    </div>
+                        <div class="form-group mb-3">
+                            <label for="cantidad">Cantidad</label>
+                            <input type="text" name="cantidad" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="fechaIngreso">Fecha de Ingreso</label>
+                            <input type="date" name="fechaIngreso" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Agregar Vidrio</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de vidrios -->
+    <?php if ($result_vidrios->num_rows > 0): ?>
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>ID Vidrio</th>
+                    <th>Tipo de Vidrio</th>
+                    <th>Cantidad</th>
+                    <th>Fecha de Ingreso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($rowVidrios = $result_vidrios->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo $rowVidrios['idVidrios']; ?></td>
+                    <td><?php echo $rowVidrios['TiposDeVidrios']; ?></td>
+                    <td><?php echo $rowVidrios['cantidad']; ?></td>
+                    <td><?php echo $rowVidrios['fechaIngreso']; ?></td>
+                    <td>
+                        <!-- Botón para editar vidrio -->
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal-<?php echo $rowVidrios['idVidrios']; ?>">Editar</button>
+                        
+                        <!-- Modal para editar vidrio -->
+                        <div class="modal fade" id="editModal-<?php echo $rowVidrios['idVidrios']; ?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Editar Vidrio</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="post">
+                                        <input type="hidden" name="action" value="edit_vidrio">
+                                        <input type="hidden" name="idVidrios" value="<?php echo $rowVidrios['idVidrios']; ?>">
+                                        <div class="modal-body">
+                                            <div class="form-group mb-3">
+                                                <label for="idTiposdevidrio">Tipo de Vidrio</label>
+                                                <select name="idTiposdevidrio" class="form-control" required>
+                                                    <?php
+                                                    // Resetea el cursor del result set de tipos de vidrio
+                                                    $result_tipos->data_seek(0);
+                                                    while ($rowTipos = $result_tipos->fetch_assoc()): ?>
+                                                        <option value="<?php echo $rowTipos['idTiposDeVidrios']; ?>" <?php echo ($rowVidrios['idTiposdevidrio'] == $rowTipos['idTiposDeVidrios']) ? 'selected' : ''; ?>>
+                                                            <?php echo $rowTipos['TiposDeVidrios']; ?>
+                                                        </option>
+                                                    <?php endwhile; ?>
+                                                </select>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label for="cantidad">Cantidad</label>
+                                                <input type="text" name="cantidad" class="form-control" value="<?php echo $rowVidrios['cantidad']; ?>" required>
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label for="fechaIngreso">Fecha de Ingreso</label>
+                                                <input type="date" name="fechaIngreso" class="form-control" value="<?php echo $rowVidrios['fechaIngreso']; ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                            <button type="submit" class="btn btn-primary">Actualizar Vidrio</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón para eliminar vidrio -->
+                        <form method="post" class="d-inline">
+                            <input type="hidden" name="action" value="delete_vidrio">
+                            <input type="hidden" name="idVidrios" value="<?php echo $rowVidrios['idVidrios']; ?>">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p>No hay vidrios registrados.</p>
+    <?php endif; ?>
+</div>
